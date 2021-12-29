@@ -8,10 +8,7 @@ int main(int argc, char** argv){
     uint64_t seed = 0x1231231;
     uintptr_t ptr = (uintptr_t)malloc(1);
 
-    if (argc < 2)
-        return -1;
-    char* p;
-    size_t n = strtol(argv[1], &p, 10);
+    size_t n = 1000000;
     key_t* keys = malloc(n*sizeof(key_t));
     for(size_t i = ptr; i < n+ptr; ++i){
         key_t h = hash(i, seed);
