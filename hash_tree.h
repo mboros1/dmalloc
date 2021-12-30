@@ -8,6 +8,8 @@
 // right: right child of node, right->key must be greater than key
 
 #include "hash.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 typedef struct hashtree hashtree_t;
 struct hashtree {

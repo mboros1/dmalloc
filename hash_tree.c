@@ -2,9 +2,6 @@
 // Binary search tree, see header file for details and API description
 //
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 #include "hash_tree.h"
 
 #define SEED 0x123123
@@ -57,7 +54,77 @@ void free_tree(hashtree_t *tree_ptr) {
     free(tree_ptr);
 }
 
+
+// interface for queue used by print_tree
+typedef struct list_node list_node_t;
+struct list_node {
+    hashtree_t* val;
+    list_node_t* next;
+};
+
+typedef struct queue queue_t;
+struct queue {
+    list_node_t* head;
+    list_node_t* tail;
+};
+
+// get the next value on the queue without destroying any data
+hashtree_t* peek(queue_t* queue);
+
+// get's the next value while moving the queue forward once
+hashtree_t* pop(queue_t* queue);
+
+// pushes a hashtree node to the end of the queue
+void push(queue_t* queue, hashtree_t* tree);
+
+// checks whether the queue is empty, returns 0 if empty and 1 if not empty
+int is_empty(queue_t* queue);
+// end queue interface
+
 // TODO: make level search, print each level (allow checking how thick the trees are)
 void print_tree(hashtree_t *tree_ptr) {
     if (!tree_ptr) return;
 }
+
+// queue implementation
+hashtree_t* peek(queue_t* queue){
+    if (!queue->head){
+        return NULL;
+    }
+    return queue->head->val;
+}
+
+hashtree_t* pop(queue_t* queue){
+    if (!queue->head){
+        fprintf(stderr, "ERROR: pop operation on empty queue\n");
+        exit(EXIT_FAILURE);
+    }
+
+    hashtree_t* result = queue->head->val;
+    list_node_t* tmp = queue->head;
+    queue->head = queue->head->next;
+    free(tmp);
+    if (!queue->head)
+        queue->tail = NULL;
+
+    return result;
+}
+
+void push(queue_t* queue, hashtree_t* tree){
+    list_node_t* tmp = malloc(sizeof(list_node_t));
+    tmp->val = tree;
+    tmp->next = NULL;
+
+    if (queue->tail)
+        queue->tail->next = tmp;
+    
+    queue->tail = tmp;
+
+    if (!queue->head)
+        queue->head = tmp;
+}
+
+int is_empty(queue_t* queue){
+    return !(!queue->head);
+}
+
