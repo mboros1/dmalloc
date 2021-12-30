@@ -7,59 +7,57 @@
 #include <stdio.h>
 #include "hash_tree.h"
 
+#define SEED 0x123123
 
 hashtree_t *insert(hashtree_t *root, val_t value) {
     if (!root){
-        return init_tree(value);
+        return create_node(value);
     }
 
-    hashtree_t* searchNode = root;
-    key_t key = hash(value.ptr);
+    hashtree_t* search_node = root;
+    key_t key = hash(value.ptr, SEED);
 
     while (1){
-        if (strcmp(searchNode->key, value) == 0){
-            searchNode->value++;
-            break;
-        } else if (strcmp(searchNode->key, value) < 0) {
-            if (!searchNode->left){
-                searchNode->left = createNode(value);
-                break;
+        key_t search_key = search_node->key;
+        if (hash_equal(key,search_key)) {
+            search_node->val = value;
+            return search_node;
+        } else if (hash_less(key,search_key)) {
+            if (!search_node->left){
+                search_node->left = create_node(value);
+                return search_node->left;
             } else {
-                searchNode = searchNode->left;
+                search_node = search_node->left;
             }
         } else {
-            if (!searchNode->right){
-                searchNode->right = createNode(value);
-                break;
+            if (!search_node->right){
+                search_node->right = create_node(value);
+                return search_node->right;
             } else {
-                searchNode = searchNode->right;
+                search_node = search_node->right;
             }
         }
     }
-    return searchNode;
+    // shouldn't get here
+    return NULL;
 }
 
-hashtree_t *init_tree(const char *value) {
-    hashtree_t* newNode = (hashtree_t*)malloc(sizeof(hashtree_t));
-    char* keyString = (char*)malloc(strlen(value) + 1);
-    strcpy(keyString, value);
-    newNode->key = keyString;
-    newNode->value = 1;
-    newNode->left = newNode->right = NULL;
-    return newNode;
+hashtree_t *create_node(val_t value) {
+    hashtree_t* new_node = malloc(sizeof(hashtree_t));
+    new_node->key = hash(value.ptr, SEED);
+    new_node->val = value;
+    new_node->left = new_node->right = NULL;
+    return new_node;
 }
 
-void freeTree(hashtree_t *pBtree) {
-    if (!pBtree) return;
-    freeTree(pBtree->left);
-    freeTree(pBtree->right);
-    free(pBtree->key);
-    free(pBtree);
+void free_tree(hashtree_t *tree_ptr) {
+    if (!tree_ptr) return;
+    free_tree(tree_ptr->left);
+    free_tree(tree_ptr->right);
+    free(tree_ptr);
 }
 
-void printTree(hashtree_t *pBtree) {
-    if (!pBtree) return;
-    printTree(pBtree->right);
-    printf("%s %d\n", pBtree->key, pBtree->value);
-    printTree(pBtree->left);
+// TODO: make level search, print each level (allow checking how thick the trees are)
+void print_tree(hashtree_t *tree_ptr) {
+    if (!tree_ptr) return;
 }

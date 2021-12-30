@@ -13,15 +13,15 @@ typedef struct hashtree hashtree_t;
 struct hashtree {
     key_t key;
     val_t val;
-    struct hashtree_t* left;
-    struct hashtree_t* right;
+    hashtree_t* left;
+    hashtree_t* right;
 };
 
 // inserts a value into tree, returns pointer to created leaf
 hashtree_t *insert(hashtree_t *root, val_t value);
 
 // initializes a new tree
-hashtree_t *init_tree(val_t value);
+hashtree_t *create_node(val_t value);
 
 // frees node and all of it's children
 void free_tree(hashtree_t *root);
