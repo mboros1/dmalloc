@@ -64,6 +64,7 @@ struct list_node {
 
 typedef struct queue queue_t;
 struct queue {
+    size_t sz;
     list_node_t* head;
     list_node_t* tail;
 };
@@ -79,11 +80,31 @@ void push(queue_t* queue, hashtree_t* tree);
 
 // checks whether the queue is empty, returns 0 if empty and 1 if not empty
 int is_empty(queue_t* queue);
+
+// creates a new empty queue; user responsible for freeing queue
+queue_t* init_queue();
 // end queue interface
 
-// TODO: make level search, print each level (allow checking how thick the trees are)
+// prints tree by level
 void print_tree(hashtree_t *tree_ptr) {
     if (!tree_ptr) return;
+    queue_t* queue = init_queue();
+    push(queue, tree_ptr);
+    size_t level = 0;
+    while(!is_empty(queue)){
+        int level_size = queue->sz;
+        printf("Level %lu: ", level);
+        while(level_size != 0){
+            hashtree_t* curr_node = pop(queue);
+            printf("%lu, ", curr_node->val.ptr);
+            if (curr_node->left) push(queue, curr_node->left);
+            if (curr_node->right) push(queue, curr_node->right);
+            level_size--;
+        }
+        printf("\n");
+        level++;
+    }
+    free(queue);
 }
 
 // queue implementation
@@ -100,6 +121,8 @@ hashtree_t* pop(queue_t* queue){
         exit(EXIT_FAILURE);
     }
 
+    queue->sz--;
+
     hashtree_t* result = queue->head->val;
     list_node_t* tmp = queue->head;
     queue->head = queue->head->next;
@@ -115,6 +138,8 @@ void push(queue_t* queue, hashtree_t* tree){
     tmp->val = tree;
     tmp->next = NULL;
 
+    queue->sz++;
+
     if (queue->tail)
         queue->tail->next = tmp;
     
@@ -125,6 +150,13 @@ void push(queue_t* queue, hashtree_t* tree){
 }
 
 int is_empty(queue_t* queue){
-    return !(!queue->head);
+    return (!queue->sz);
 }
 
+queue_t* init_queue(){
+    queue_t* queue = malloc(sizeof(queue_t));
+    queue->head = NULL;
+    queue->tail = NULL;
+    queue->sz = 0;
+    return queue;
+}
