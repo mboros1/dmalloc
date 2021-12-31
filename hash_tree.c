@@ -51,7 +51,7 @@ hashtree_t* find_min(hashtree_t* root){
     return root;
 }
 
-hashtree_t* free_node(hashtree_t* search_node){
+hashtree_t* remove_node(hashtree_t* search_node){
     if (!search_node->left && !search_node->right){
         free(search_node);
         return NULL;
@@ -83,7 +83,7 @@ void del_node(hashtree_t *root, val_t value){
         if (hash_less(key,search_key)){
             if (search_node->left){
                 if (hash_equal(key, search_node->left->key)){
-                    search_node->left = free_node(search_node->left); //TODO: implement free_ndoe, follow logic in 'node found' branch
+                    search_node->left = remove_node(search_node->left); //TODO: implement free_ndoe, follow logic in 'node found' branch
                     return;
                 }
                 search_node = search_node->left;
@@ -95,7 +95,7 @@ void del_node(hashtree_t *root, val_t value){
         } else if (hash_greater(key,search_key)){
             if (search_node->right){
                 if (hash_equal(key, search_node->right->key)){
-                    search_node->right = free_node(search_node->right);
+                    search_node->right = remove_node(search_node->right);
                     return;
                 }
                 search_node = search_node->right;

@@ -2,6 +2,11 @@
 #define DMALLOC_H
 #include <stdlib.h>
 #include <inttypes.h>
+#include <string.h>
+#include <sys/mman.h>
+#include "hash.h"
+
+typedef val_t freed_ptr_t;
 
 /// dmalloc(sz, file, line)
 ///    Return a pointer to `sz` bytes of newly-allocated dynamic memory.
