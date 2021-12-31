@@ -5,6 +5,7 @@
 #include <string.h>
 #include <sys/mman.h>
 #include "hash.h"
+#include "hash_tree.h"
 
 typedef val_t freed_ptr_t;
 

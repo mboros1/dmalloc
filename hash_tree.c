@@ -6,12 +6,12 @@
 
 const unsigned SEED = 0x123123;
 
-hashtree_t* init_tree(){
+hashtree_t* ht_init(){
     val_t value = {0,0};
-    return create_node(value);
+    return ht_new(value);
 }
 
-hashtree_t *ins_node(hashtree_t *root, val_t value) {
+hashtree_t *ht_ins(hashtree_t *root, val_t value) {
     hashtree_t* search_node = root;
     key_t key = hash(value.ptr, SEED);
 
@@ -22,14 +22,14 @@ hashtree_t *ins_node(hashtree_t *root, val_t value) {
             return search_node;
         } else if (hash_less(key,search_key)) {
             if (!search_node->left){
-                search_node->left = create_node(value);
+                search_node->left = ht_new(value);
                 return search_node->left;
             } else {
                 search_node = search_node->left;
             }
         } else {
             if (!search_node->right){
-                search_node->right = create_node(value);
+                search_node->right = ht_new(value);
                 return search_node->right;
             } else {
                 search_node = search_node->right;
@@ -40,7 +40,7 @@ hashtree_t *ins_node(hashtree_t *root, val_t value) {
     return NULL;
 }
 
-// helper function to find minimal value of subtree, for del_node function
+// helper function to find minimal value of subtree, for ht_del function
 hashtree_t* find_min(hashtree_t* root){
     if (!root)
         return NULL;
@@ -65,13 +65,13 @@ hashtree_t* remove_node(hashtree_t* search_node){
         return tmp;
     } else {
         hashtree_t* tmp = find_min(search_node->right);
-        del_node(search_node->right, tmp->val);
+        ht_del(search_node->right, tmp->val);
         return tmp;
     }
 
 }
 
-void del_node(hashtree_t *root, val_t value){
+void ht_del(hashtree_t *root, val_t value){
     if (root == NULL) return;
 
     hashtree_t* search_node = root;
@@ -83,7 +83,7 @@ void del_node(hashtree_t *root, val_t value){
         if (hash_less(key,search_key)){
             if (search_node->left){
                 if (hash_equal(key, search_node->left->key)){
-                    search_node->left = remove_node(search_node->left); //TODO: implement free_ndoe, follow logic in 'node found' branch
+                    search_node->left = remove_node(search_node->left);
                     return;
                 }
                 search_node = search_node->left;
@@ -110,8 +110,31 @@ void del_node(hashtree_t *root, val_t value){
     }
 }
 
+hashtree_t* ht_get(hashtree_t* root, uintptr_t ptr){
+    if (!root)
+        return NULL;
+    key_t key = hash(ptr, SEED);
+    hashtree_t* search_node = root;
+    while(1){
+        key_t search_key = search_node->key;
+        if (hash_less(key, search_key)){
+            if (!search_node->left)
+                return NULL;
+            search_node = search_node->left;
+        } else if (hash_greater(key, search_key)){
+            if (!search_node->right)
+                return NULL;
+            search_node = search_node->right;
+        } else {
+            return search_node;
+        }
+    }
+    // shouldn't get here
+    return NULL;
+}
 
-hashtree_t *create_node(val_t value) {
+
+hashtree_t *ht_new(val_t value) {
     hashtree_t* new_node = malloc(sizeof(hashtree_t));
     new_node->key = hash(value.ptr, SEED);
     new_node->val = value;
@@ -119,15 +142,15 @@ hashtree_t *create_node(val_t value) {
     return new_node;
 }
 
-void free_tree(hashtree_t *tree_ptr) {
+void ht_free(hashtree_t *tree_ptr) {
     if (!tree_ptr) return;
-    free_tree(tree_ptr->left);
-    free_tree(tree_ptr->right);
+    ht_free(tree_ptr->left);
+    ht_free(tree_ptr->right);
     free(tree_ptr);
 }
 
 
-// interface for queue used by print_tree
+// interface for queue used by ht_print
 typedef struct list_node list_node_t;
 struct list_node {
     hashtree_t* val;
@@ -158,7 +181,7 @@ queue_t* init_queue();
 // end queue interface
 
 // prints tree by level
-void print_tree(hashtree_t *tree_ptr) {
+void ht_print(hashtree_t *tree_ptr) {
     if (!tree_ptr) return;
     queue_t* queue = init_queue();
     push(queue, tree_ptr);
