@@ -4,13 +4,14 @@
 
 #include "hash_tree.h"
 
-#define SEED 0x123123
+const unsigned SEED = 0x123123;
 
-hashtree_t *insert(hashtree_t *root, val_t value) {
-    if (!root){
-        return create_node(value);
-    }
+hashtree_t* init_tree(){
+    val_t value = {0,0};
+    return create_node(value);
+}
 
+hashtree_t *ins_node(hashtree_t *root, val_t value) {
     hashtree_t* search_node = root;
     key_t key = hash(value.ptr, SEED);
 
@@ -38,6 +39,77 @@ hashtree_t *insert(hashtree_t *root, val_t value) {
     // shouldn't get here
     return NULL;
 }
+
+// helper function to find minimal value of subtree, for del_node function
+hashtree_t* find_min(hashtree_t* root){
+    if (!root)
+        return NULL;
+
+    if (root->left)
+        return find_min(root->left);
+
+    return root;
+}
+
+hashtree_t* free_node(hashtree_t* search_node){
+    if (!search_node->left && !search_node->right){
+        free(search_node);
+        return NULL;
+    } else if (!search_node->left){
+        hashtree_t* tmp = search_node->right;
+        free(search_node);
+        return tmp;
+    } else if (!search_node->right){
+        hashtree_t* tmp = search_node->left;
+        free(search_node);
+        return tmp;
+    } else {
+        hashtree_t* tmp = find_min(search_node->right);
+        del_node(search_node->right, tmp->val);
+        return tmp;
+    }
+
+}
+
+void del_node(hashtree_t *root, val_t value){
+    if (root == NULL) return;
+
+    hashtree_t* search_node = root;
+    key_t key = hash(value.ptr, SEED);
+
+    while(1){
+        key_t search_key = search_node->key;
+        // check if in left subtree
+        if (hash_less(key,search_key)){
+            if (search_node->left){
+                if (hash_equal(key, search_node->left->key)){
+                    search_node->left = free_node(search_node->left); //TODO: implement free_ndoe, follow logic in 'node found' branch
+                    return;
+                }
+                search_node = search_node->left;
+            } else {
+                // not found
+                return;
+            }
+        // check if in right subtree
+        } else if (hash_greater(key,search_key)){
+            if (search_node->right){
+                if (hash_equal(key, search_node->right->key)){
+                    search_node->right = free_node(search_node->right);
+                    return;
+                }
+                search_node = search_node->right;
+            } else {
+                // not found
+                return;
+            }
+        } else {
+            // shouldn't get here
+            return;
+        }
+    }
+}
+
 
 hashtree_t *create_node(val_t value) {
     hashtree_t* new_node = malloc(sizeof(hashtree_t));

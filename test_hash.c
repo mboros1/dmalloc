@@ -36,5 +36,11 @@ int main(int argc, char** argv){
     free(keys);
     printf("%d collisions after running %lu random numbers\n", collisions, n);
 
+    val_t v = {3,3};
+    key_t k1 = hash(v.ptr, seed);
+    key_t k2 = hash(v.ptr, seed);
+
+    assert(hash_equal(k1,k2));
+
 }
 

@@ -14,4 +14,4 @@ test_quick_sort: hash.o quick_sort.o test_quick_sort.o
 test_hash_tree: test_hash_tree.o hash.o hash_tree.o
 
 clean:
-	rm *.o test_hash test_quick_sort
+	rm -f *.o test_hash test_quick_sort test_hash_tree

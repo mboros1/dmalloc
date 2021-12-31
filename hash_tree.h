@@ -19,8 +19,11 @@ struct hashtree {
     hashtree_t* right;
 };
 
+// initializes the root node, which is a dummy with zero'd out data. Tree must be initialized before use
+hashtree_t* init_tree();
+
 // inserts a value into tree, returns pointer to created leaf
-hashtree_t *insert(hashtree_t *root, val_t value);
+hashtree_t *ins_node(hashtree_t *root, val_t value);
 
 // initializes a new tree
 hashtree_t *create_node(val_t value);
@@ -30,5 +33,8 @@ void free_tree(hashtree_t *root);
 
 // prints node and all of it's children
 void print_tree(hashtree_t *root);
+
+// delete a node, maintains search tree structure
+void del_node(hashtree_t *root, val_t value);
 
 #endif
