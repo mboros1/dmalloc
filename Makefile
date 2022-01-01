@@ -4,6 +4,7 @@ CFLAGS=-g -O0 -Wall -std=c11
 hash.o: hash.c
 quick_sort.o: quick_sort.c hash.o
 hash_tree.o: hash.o hash_tree.c
+bst.o: hash.o bst.c
 dmalloc.o: hash.o dmalloc.c
 
 test_quick_sort.o: test_quick_sort.c quick_sort.o hash.o
