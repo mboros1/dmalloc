@@ -2,6 +2,7 @@
 #define BST_H
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "hash.h"
 
 // binary search tree, each node contains a pointer to a freed allocation with it's
@@ -48,5 +49,8 @@ void bst_free(bst_t* root);
 
 // delete a node
 void bst_del(bst_t* root, size_t key);
+
+// print tree
+void bst_print(bst_t* root);
 
 #endif
