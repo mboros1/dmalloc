@@ -1,7 +1,4 @@
-//
-// Binary search tree, see header file for details and API description
-//
-
+#define DMALLOC_DISABLE 1
 #include "hash_tree.h"
 
 const unsigned SEED = 0x123123;

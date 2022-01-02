@@ -1,3 +1,4 @@
+#define DMALLOC_DISABLE 1
 #include "quick_sort.h"
 
 void swap(key_t *arr, int num1, int num2){

@@ -12,7 +12,9 @@ void test_insert(){
     for(int i = 0; i <= 100000; ++i){
         int x = rand() % 100;
         ++x;
-        val_t v = {x,x};
+        int y = rand() % 10000;
+        ++y;
+        val_t v = {y,x};
         bst_ins(root, v);
     }
 }

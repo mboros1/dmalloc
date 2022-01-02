@@ -1,3 +1,4 @@
+#define DMALLOC_DISABLE 1
 #include "hash.h"
 
 int hash_less(key_t key1, key_t key2){

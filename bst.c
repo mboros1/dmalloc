@@ -1,3 +1,4 @@
+#define DMALLOC_DISABLE 1
 #include "bst.h"
 
 bst_t* bst_new(void* ptr, size_t sz){

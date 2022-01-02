@@ -5,7 +5,7 @@ hash.o: hash.c
 quick_sort.o: quick_sort.c hash.o
 hash_tree.o: hash.o hash_tree.c
 bst.o: hash.o bst.c
-dmalloc.o: hash.o dmalloc.c
+dmalloc.o: hash.o dmalloc.c hash_tree.o bst.o
 
 test_quick_sort.o: test_quick_sort.c quick_sort.o hash.o
 test_hash.o: test_hash.c hash.o quick_sort.o
