@@ -62,7 +62,7 @@ void dfree(void* ptr, const char* file, size_t line){
         ++disabled;
         hashtree_t* ht = ht_get(allocs, (uintptr_t)ptr);
         if (!ht){
-            fprintf(stderr, "ERROR: wild free %s, %zu\n", file, line);
+            fprintf(stderr, "ERROR: wild free, %p, %s, %zu\n", ptr, file, line);
             exit(EXIT_FAILURE);
         }
         ht_del(allocs, ht->val);

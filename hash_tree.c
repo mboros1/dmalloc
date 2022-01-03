@@ -37,17 +37,6 @@ hashtree_t *ht_ins(hashtree_t *root, val_t value) {
     return NULL;
 }
 
-// helper function to find minimal value of subtree, for ht_del function
-hashtree_t* ht_find_min(hashtree_t* root){
-    if (!root)
-        return NULL;
-
-    if (root->left)
-        return ht_find_min(root->left);
-
-    return root;
-}
-
 hashtree_t* remove_node(hashtree_t* search_node){
     if (!search_node->left && !search_node->right){
         free(search_node);
@@ -61,9 +50,25 @@ hashtree_t* remove_node(hashtree_t* search_node){
         free(search_node);
         return tmp;
     } else {
-        hashtree_t* tmp = ht_find_min(search_node->right);
-        ht_del(search_node->right, tmp->val);
-        return tmp;
+        hashtree_t* second_min = search_node->right;
+        hashtree_t* min = second_min->left;
+        while(min && min->left){
+            second_min = min;
+            min = min->left;
+        }
+        if (min){
+            search_node->key = min->key;
+            search_node->val = min->val;
+            free(min);
+            second_min->left = min->right;
+            return search_node;
+        } else {
+            search_node->key = second_min->key;
+            search_node->val = second_min->val;
+            search_node->right = second_min->right;
+            free(second_min);
+            return search_node;
+        }
     }
 
 }
