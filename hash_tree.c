@@ -38,12 +38,12 @@ hashtree_t *ht_ins(hashtree_t *root, val_t value) {
 }
 
 // helper function to find minimal value of subtree, for ht_del function
-hashtree_t* find_min(hashtree_t* root){
+hashtree_t* ht_find_min(hashtree_t* root){
     if (!root)
         return NULL;
 
     if (root->left)
-        return find_min(root->left);
+        return ht_find_min(root->left);
 
     return root;
 }
@@ -61,7 +61,7 @@ hashtree_t* remove_node(hashtree_t* search_node){
         free(search_node);
         return tmp;
     } else {
-        hashtree_t* tmp = find_min(search_node->right);
+        hashtree_t* tmp = ht_find_min(search_node->right);
         ht_del(search_node->right, tmp->val);
         return tmp;
     }
@@ -154,7 +154,7 @@ struct list_node {
     list_node_t* next;
 };
 
-typedef struct queue queue_t;
+typedef struct queue ht_queue_t;
 struct queue {
     size_t sz;
     list_node_t* head;
@@ -162,35 +162,35 @@ struct queue {
 };
 
 // get the next value on the queue without destroying any data
-hashtree_t* peek(queue_t* queue);
+hashtree_t* ht_peek(ht_queue_t* queue);
 
 // get's the next value while moving the queue forward once
-hashtree_t* pop(queue_t* queue);
+hashtree_t* ht_pop(ht_queue_t* queue);
 
 // pushes a hashtree node to the end of the queue
-void push(queue_t* queue, hashtree_t* tree);
+void ht_push(ht_queue_t* queue, hashtree_t* tree);
 
 // checks whether the queue is empty, returns 0 if empty and 1 if not empty
-int is_empty(queue_t* queue);
+int ht_is_empty(ht_queue_t* queue);
 
 // creates a new empty queue; user responsible for freeing queue
-queue_t* init_queue();
+ht_queue_t* ht_init_queue();
 // end queue interface
 
 // prints tree by level
 void ht_print(hashtree_t *tree_ptr) {
     if (!tree_ptr) return;
-    queue_t* queue = init_queue();
-    push(queue, tree_ptr);
+    ht_queue_t* queue = ht_init_queue();
+    ht_push(queue, tree_ptr);
     size_t level = 0;
-    while(!is_empty(queue)){
+    while(!ht_is_empty(queue)){
         int level_size = queue->sz;
         printf("Level %lu: ", level);
         while(level_size != 0){
-            hashtree_t* curr_node = pop(queue);
+            hashtree_t* curr_node = ht_pop(queue);
             printf("%lu, ", curr_node->val.ptr);
-            if (curr_node->left) push(queue, curr_node->left);
-            if (curr_node->right) push(queue, curr_node->right);
+            if (curr_node->left) ht_push(queue, curr_node->left);
+            if (curr_node->right) ht_push(queue, curr_node->right);
             level_size--;
         }
         printf("\n");
@@ -199,17 +199,29 @@ void ht_print(hashtree_t *tree_ptr) {
     free(queue);
 }
 
+
+// print memory leak report
+void ht_mem_leak_report(hashtree_t *root){
+    if (!root) return;
+    if (root->val.ptr){
+        fprintf(stderr, "Memory leak address: %p, size: %zu bytes\n", (void*)root->val.ptr, root->val.sz);
+    }
+    ht_mem_leak_report(root->left);
+    ht_mem_leak_report(root->right);
+}
+    
+
 // queue implementation
-hashtree_t* peek(queue_t* queue){
+hashtree_t* ht_peek(ht_queue_t* queue){
     if (!queue->head){
         return NULL;
     }
     return queue->head->val;
 }
 
-hashtree_t* pop(queue_t* queue){
+hashtree_t* ht_pop(ht_queue_t* queue){
     if (!queue->head){
-        fprintf(stderr, "ERROR: pop operation on empty queue\n");
+        fprintf(stderr, "ERROR: ht_pop operation on empty queue\n");
         exit(EXIT_FAILURE);
     }
 
@@ -225,7 +237,7 @@ hashtree_t* pop(queue_t* queue){
     return result;
 }
 
-void push(queue_t* queue, hashtree_t* tree){
+void ht_push(ht_queue_t* queue, hashtree_t* tree){
     list_node_t* tmp = malloc(sizeof(list_node_t));
     tmp->val = tree;
     tmp->next = NULL;
@@ -241,12 +253,12 @@ void push(queue_t* queue, hashtree_t* tree){
         queue->head = tmp;
 }
 
-int is_empty(queue_t* queue){
+int ht_is_empty(ht_queue_t* queue){
     return (!queue->sz);
 }
 
-queue_t* init_queue(){
-    queue_t* queue = malloc(sizeof(queue_t));
+ht_queue_t* ht_init_queue(){
+    ht_queue_t* queue = malloc(sizeof(ht_queue_t));
     queue->head = NULL;
     queue->tail = NULL;
     queue->sz = 0;

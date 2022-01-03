@@ -40,4 +40,7 @@ void ht_del(hashtree_t *root, val_t value);
 // search for a node with given pointer, return the node or NULL if not found
 hashtree_t* ht_get(hashtree_t* root, uintptr_t ptr);
 
+// prints out report of all detected memory leaks
+void ht_mem_leak_report(hashtree_t *root);
+
 #endif

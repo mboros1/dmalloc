@@ -81,6 +81,6 @@ static void init_base_alloc(){
 }
 
 static void base_allocator_atexit() {
-    ht_print(allocs);
+    ht_mem_leak_report(allocs);
     bst_free(frees);
 }
