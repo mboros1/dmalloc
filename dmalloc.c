@@ -65,6 +65,7 @@ void dfree(void* ptr, const char* file, size_t line){
             fprintf(stderr, "ERROR: wild free %s, %zu\n", file, line);
             exit(EXIT_FAILURE);
         }
+        ht_del(allocs, ht->val);
         --disabled;
     }
 }

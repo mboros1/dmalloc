@@ -7,5 +7,8 @@
     printf(" Passed\n"); \
 } while(0);
 
+#define run_test_stderr(f,s) do { \
+
+
 #endif
 

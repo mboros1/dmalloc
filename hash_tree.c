@@ -203,6 +203,10 @@ void ht_print(hashtree_t *tree_ptr) {
 // print memory leak report
 void ht_mem_leak_report(hashtree_t *root){
     if (!root) return;
+    if (root && !root->val.ptr && !root->left && !root->right){
+        fprintf(stderr, "No memory leaks detected\n");
+        return;
+    }
     if (root->val.ptr){
         fprintf(stderr, "Memory leak address: %p, size: %zu bytes\n", (void*)root->val.ptr, root->val.sz);
     }
