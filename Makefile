@@ -21,12 +21,12 @@ test_quick_sort: hash.o quick_sort.o test_quick_sort.o
 test_hash_tree: test_hash_tree.o hash.o hash_tree.o
 test_bst: test_bst.o hash.o bst.o
 
-test01: dmalloc.o hash_tree.o bst.o hash.o tests/test01.c
-test02: dmalloc.o hash_tree.o bst.o hash.o tests/test02.c
-test03: dmalloc.o hash_tree.o bst.o hash.o tests/test03.c
-test04: dmalloc.o hash_tree.o bst.o hash.o tests/test04.c
-test05: dmalloc.o hash_tree.o bst.o hash.o tests/test05.c
-test06: dmalloc.o hash_tree.o bst.o hash.o tests/test06.c
+test01: dmalloc.o hash_tree.o bst.o hash.o test01.c
+test02: dmalloc.o hash_tree.o bst.o hash.o test02.c
+test03: dmalloc.o hash_tree.o bst.o hash.o test03.c
+test04: dmalloc.o hash_tree.o bst.o hash.o test04.c
+test05: dmalloc.o hash_tree.o bst.o hash.o test05.c
+test06: dmalloc.o hash_tree.o bst.o hash.o test06.c
 
 test_all: test_all.c
 
