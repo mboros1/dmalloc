@@ -19,10 +19,11 @@
     int n = strlen(s); \
     int c; \
     FILE* file_ptr = fopen("tmp_test_output", "r"); \
-    for(int i = 0; i < n; ++i){ \
+    for(int _II = 0; _II < n; ++_II){ \
         assert((c=fgetc(file_ptr)) != EOF); \
-        if (s[i] != '?') \
-            assert(s[i] == c); \
+        if (s[_II] != '?'){ \
+            assert(s[_II] == c); \
+        } \
     } \
     assert(fgetc(file_ptr) == EOF); \
     printf(" Passed\n"); \

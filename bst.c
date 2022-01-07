@@ -24,7 +24,7 @@ bst_t* bst_find_min(bst_t* root){
     return root;
 }
 
-void* bst_bst_pop(bst_t* root, size_t key);
+void* bst_pop(bst_t* root, size_t key);
 
 bst_t* bst_remove_next(bst_t* search_node, void** out_ptr){
     if (search_node->next){
@@ -46,14 +46,50 @@ bst_t* bst_remove_next(bst_t* search_node, void** out_ptr){
             free(tmp);
         } else {
             bst_t* tmp = bst_find_min(search_node->right);
-            bst_bst_pop(search_node->right, tmp->key);
+            bst_pop(search_node->right, tmp->key);
             return tmp;
         }
     }
     return search_node;
 }
 
-void* bst_bst_pop(bst_t* root, size_t key){
+/*
+int bst_get(bst_t* root, val_t val){
+    if (!root)
+        return 0;
+
+    bst_t* search_node = root;
+    void* out_ptr;
+    key_t key = val.key;
+
+    while(search_node){
+        size_t search_key = search_node->key;
+        if (key < search_key){
+            search_node = search_node->left;
+        } else if (key > search_key) {
+            search_node = search_node->right;
+        } else {
+            val_t v = {.ptr=search_node->key, .sz=search_node->val};
+            if ((uintptr_t)search_node->val == val.ptr){
+                return 1;
+            } else {
+                bst_val_t* search_next = search_node->next;
+                while(search_next){
+                    if ((uintptr_t)search_next->val == val.ptr){
+                        v.ptr = (uintptr_t)search_next->val;
+                        return v;
+                    }
+                    search_next = search_next->next;
+                }
+                return NULL;
+            }
+        }
+    }
+    return NULL;
+}
+*/
+
+void* bst_pop(bst_t* root, size_t key){
     if (!root)
         return NULL;
 
@@ -110,7 +146,7 @@ void* bst_fetch(bst_t* root, size_t key){
     if (!search_result)
         return NULL;
 
-    return bst_bst_pop(root, search_result->key);
+    return bst_pop(root, search_result->key);
 }
 
 void bst_ins(bst_t* root, val_t val){
@@ -163,7 +199,7 @@ struct queue {
 bst_t* bst_peek(bst_queue_t* queue);
 
 // get's the next value while moving the queue forward once
-bst_t* bst_pop(bst_queue_t* queue);
+bst_t* bst_qpop(bst_queue_t* queue);
 
 // bst_pushes a hashtree node to the end of the queue
 void bst_push(bst_queue_t* queue,bst_t* tree);
@@ -185,7 +221,7 @@ void bst_print(bst_t *tree_ptr) {
         int level_size = queue->sz;
         printf("Level %lu: ", level);
         while(level_size != 0){
-            bst_t* curr_node = bst_pop(queue);
+            bst_t* curr_node = bst_qpop(queue);
             printf("%lu, ", curr_node->key);
             if (curr_node->left) bst_push(queue, curr_node->left);
             if (curr_node->right) bst_push(queue, curr_node->right);
@@ -205,9 +241,9 @@ bst_t* bst_peek(bst_queue_t* queue){
     return queue->head->val;
 }
 
-bst_t* bst_pop(bst_queue_t* queue){
+bst_t* bst_qpop(bst_queue_t* queue){
     if (!queue->head){
-        fprintf(stderr, "ERROR: bst_pop operation on empty queue\n");
+        fprintf(stderr, "ERROR: pop operation on empty queue\n");
         exit(EXIT_FAILURE);
     }
 
@@ -252,6 +288,15 @@ bst_queue_t* init_queue(){
 }
 
 void bst_free(bst_t* root){
-
+    if (!root)
+        return;
+    while(root->next){
+        bst_val_t* tmp = root->next;
+        root->next = tmp->next;
+        free(tmp);
+    }
+    bst_free(root->left);
+    bst_free(root->right);
+    free(root);
 }
 

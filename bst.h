@@ -35,8 +35,12 @@ struct bst {
     bst_t* right;
 };
 
+
 // inits an empty bst with a dummy root node
 bst_t* bst_init();
+
+// determines if the tree contains a value
+//int bst_contains(bst_t* root, val_t val);
 
 // fetches the next freed allocation that has size >= sz and pops it off the tree
 void* bst_fetch(bst_t* root, size_t sz);

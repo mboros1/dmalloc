@@ -1,5 +1,5 @@
 CC=cc
-CFLAGS=-g -O0 -Wall -std=c11
+CFLAGS= -g -O0 -Wall -std=c11
 INC_DIR=./
 
 TESTS = $(patsubst %.c, %, $(sort $(wildcard test[0-9][0-9].c)))
@@ -27,6 +27,12 @@ test03: dmalloc.o hash_tree.o bst.o hash.o test03.c
 test04: dmalloc.o hash_tree.o bst.o hash.o test04.c
 test05: dmalloc.o hash_tree.o bst.o hash.o test05.c
 test06: dmalloc.o hash_tree.o bst.o hash.o test06.c
+test07: dmalloc.o hash_tree.o bst.o hash.o test07.c
+test08: dmalloc.o hash_tree.o bst.o hash.o test08.c
+test09: dmalloc.o hash_tree.o bst.o hash.o test09.c
+test10: dmalloc.o hash_tree.o bst.o hash.o test10.c
+test11: dmalloc.o hash_tree.o bst.o hash.o test11.c
+test12: dmalloc.o hash_tree.o bst.o hash.o test12.c
 
 test_all: test_all.c
 
@@ -35,4 +41,4 @@ test: test_all $(TESTS)
 
 
 clean:
-	rm -f *.o test_hash test_quick_sort test_hash_tree test1 test_all
+	rm -f *.o test_hash test_quick_sort test_hash_tree test?? test_all

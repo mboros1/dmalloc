@@ -37,10 +37,17 @@ void test_fetch_specific(){
     assert(ptr == NULL);
 }
 
+void test_free_and_print(){
+    bst_print(root);
+    bst_free(root);
+    bst_print(root);
+}
+
 
 int main(){
     run_test(test_init);
     run_test(test_insert);
     run_test(test_fetch);
     run_test(test_fetch_specific);
+    run_test(test_free_and_print);
 }

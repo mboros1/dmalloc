@@ -41,7 +41,7 @@ void* dmalloc(size_t sz, const char* file, size_t line){
     }
 
     if (!ptr) {
-        fprintf(stderr, "ERROR: failed to allocate %s, %zu, size %zu\n", file, line, sz);
+        fprintf(stderr, "ERROR: failed to allocate %s:%zu, size %zu\n", file, line, sz);
         exit(EXIT_FAILURE);
     }
 
@@ -62,12 +62,26 @@ void dfree(void* ptr, const char* file, size_t line){
         ++disabled;
         hashtree_t* ht = ht_get(allocs, (uintptr_t)ptr);
         if (!ht){
-            fprintf(stderr, "ERROR: wild free, %p, %s, %zu\n", ptr, file, line);
+            fprintf(stderr, "ERROR: wild free, %p, %s:%zu\n", ptr, file, line);
             exit(EXIT_FAILURE);
         }
+        bst_ins(frees, ht->val);
         ht_del(allocs, ht->val);
         --disabled;
     }
+}
+
+void* dcalloc(size_t nmemb, size_t sz, const char* file, size_t line){
+    if (((size_t)-1)/nmemb <= sz){
+        fprintf(stderr, "ERROR: failed to allocate %s, %zu, count %zu of size %zu\n", file, line, nmemb, sz);
+        exit(EXIT_FAILURE);
+    }
+
+    void* ptr = dmalloc(nmemb * sz, file, line);
+    if (ptr){
+        memset(ptr, 0, nmemb * sz);
+    }
+    return ptr;
 }
 
 
