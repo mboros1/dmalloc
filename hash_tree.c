@@ -5,10 +5,10 @@ const unsigned SEED = 0x123123;
 
 hashtree_t* ht_init(){
     val_t value = {0,0};
-    return ht_new(value);
+    return ht_new(value, "", 0);
 }
 
-hashtree_t *ht_ins(hashtree_t *root, val_t value) {
+hashtree_t *ht_ins(hashtree_t *root, val_t value, const char* file, size_t line) {
     hashtree_t* search_node = root;
     key_t key = hash(value.ptr, SEED);
 
@@ -16,17 +16,19 @@ hashtree_t *ht_ins(hashtree_t *root, val_t value) {
         key_t search_key = search_node->key;
         if (hash_equal(key,search_key)) {
             search_node->val = value;
+            search_node->file = file;
+            search_node->line = line;
             return search_node;
         } else if (hash_less(key,search_key)) {
             if (!search_node->left){
-                search_node->left = ht_new(value);
+                search_node->left = ht_new(value, file, line);
                 return search_node->left;
             } else {
                 search_node = search_node->left;
             }
         } else {
             if (!search_node->right){
-                search_node->right = ht_new(value);
+                search_node->right = ht_new(value, file, line);
                 return search_node->right;
             } else {
                 search_node = search_node->right;
@@ -136,11 +138,13 @@ hashtree_t* ht_get(hashtree_t* root, uintptr_t ptr){
 }
 
 
-hashtree_t *ht_new(val_t value) {
+hashtree_t *ht_new(val_t value, const char* file, size_t line) {
     hashtree_t* new_node = malloc(sizeof(hashtree_t));
     new_node->key = hash(value.ptr, SEED);
     new_node->val = value;
     new_node->left = new_node->right = NULL;
+    new_node->file = file;
+    new_node->line = line;
     return new_node;
 }
 
@@ -213,7 +217,7 @@ void ht_mem_leak_report(hashtree_t *root){
         return;
     }
     if (root->val.ptr){
-        fprintf(stderr, "Memory leak address: %p, size: %zu bytes\n", (void*)root->val.ptr, root->val.sz);
+        fprintf(stderr, "Memory leak address: %p, size: %zu bytes, %s:%zu\n", (void*)root->val.ptr, root->val.sz, root->file, root->line);
     }
     ht_mem_leak_report(root->left);
     ht_mem_leak_report(root->right);

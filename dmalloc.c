@@ -3,7 +3,6 @@
 
 #define BOUNDARY_SZ 4
 #define TRAILER_MAGIC 0xAD
-#define HH_TRACK_SZ 5
 
 typedef struct metadata metadata_t;
 struct metadata {
@@ -37,7 +36,7 @@ void* dmalloc(size_t sz, const char* file, size_t line){
     void* ptr = bst_fetch(frees, sz);
 
     if (!ptr) {
-        ptr = malloc(sz);
+        ptr = malloc(sz+BOUNDARY_SZ);
     }
 
     if (!ptr) {
@@ -46,8 +45,9 @@ void* dmalloc(size_t sz, const char* file, size_t line){
     }
 
     if (ptr) {
+        *((char*)ptr+sz) = TRAILER_MAGIC;
         val_t v = {(uintptr_t)ptr, sz};
-        ht_ins(allocs, v);
+        ht_ins(allocs, v, file, line);
     }
 
     --disabled;
@@ -65,9 +65,19 @@ void dfree(void* ptr, const char* file, size_t line){
             fprintf(stderr, "ERROR: wild free, %p, %s:%zu\n", ptr, file, line);
             exit(EXIT_FAILURE);
         }
+
+        size_t sz = ht->val.sz;
+
         bst_ins(frees, ht->val);
         ht_del(allocs, ht->val);
         --disabled;
+
+        uint8_t boundary = *( (uint8_t*)ptr + sz);
+        if (boundary != TRAILER_MAGIC){
+          fprintf(stderr, "ERROR: write past end of allocation for pointer %p at address %p, %s:%zu\n",
+              ptr, (char*)ptr+sz, file, line);
+          exit(EXIT_FAILURE);
+        }
     }
 }
 

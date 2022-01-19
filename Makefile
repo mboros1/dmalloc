@@ -33,6 +33,10 @@ test09: dmalloc.o hash_tree.o bst.o hash.o test09.c
 test10: dmalloc.o hash_tree.o bst.o hash.o test10.c
 test11: dmalloc.o hash_tree.o bst.o hash.o test11.c
 test12: dmalloc.o hash_tree.o bst.o hash.o test12.c
+test13: dmalloc.o hash_tree.o bst.o hash.o test13.c
+test14: dmalloc.o hash_tree.o bst.o hash.o test14.c
+test15: dmalloc.o hash_tree.o bst.o hash.o test15.c
+test16: dmalloc.o hash_tree.o bst.o hash.o test16.c
 
 test_all: test_all.c
 

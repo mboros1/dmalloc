@@ -15,6 +15,8 @@ typedef struct hashtree hashtree_t;
 struct hashtree {
     key_t key;
     val_t val;
+    const char* file;
+    size_t line;
     hashtree_t* left;
     hashtree_t* right;
 };
@@ -23,10 +25,10 @@ struct hashtree {
 hashtree_t* ht_init();
 
 // inserts a value into tree, returns pointer to created leaf
-hashtree_t * ht_ins(hashtree_t *root, val_t value);
+hashtree_t *ht_ins(hashtree_t *root, val_t value, const char* file, size_t line);
 
 // create a new node
-hashtree_t *ht_new(val_t value);
+hashtree_t *ht_new(val_t value, const char* file, size_t line);
 
 // frees node and all of it's children
 void ht_free(hashtree_t *root);
