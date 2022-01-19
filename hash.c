@@ -1,4 +1,29 @@
+#define DMALLOC_DISABLE 1
 #include "hash.h"
+
+int hash_less(key_t key1, key_t key2){
+    if (key1.h1 < key2.h1)
+        return 1;
+    
+    if (key1.h1 == key2.h1 && key1.h2 < key2.h2)
+        return 1;
+    
+    return 0;
+}
+
+int hash_greater(key_t key1, key_t key2){
+    if (key1.h1 > key2.h1)
+        return 1;
+
+    if (key1.h1 == key2.h1 && key1.h2 > key2.h2)
+        return 1;
+    
+    return 0;
+}
+
+int hash_equal(key_t key1, key_t key2){
+    return key1.h1 == key2.h1 && key1.h2 == key2.h2;
+}
 
 static uint64_t rotl64 ( uint64_t x, int8_t r ) {
   return (x << r) | (x >> (64 - r));
